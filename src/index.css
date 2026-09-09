@@ -1,0 +1,56 @@
+:root {
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+/* The root is a flex item of body; without this the cabinet shrinks to fit. */
+#root {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The room the machine is standing in. 1973 is a fluorescent-lit terminal
+   room; the remaster is somewhere underground with a lamp. */
+body {
+  background: radial-gradient(120% 80% at 50% 0%, #5a5a5a 0%, #3a3a3a 55%, #232323 100%);
+  color: #241f1a;
+  font-family: ui-monospace, "DejaVu Sans Mono", "Cascadia Mono", "Courier New", monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(8px, 2vw, 28px);
+  transition: background 400ms ease;
+}
+
+html[data-skin='modern'] body {
+  background:
+    radial-gradient(80% 55% at 20% 0%, rgba(255, 208, 138, 0.16) 0%, transparent 60%),
+    radial-gradient(70% 55% at 85% 20%, rgba(140, 90, 220, 0.22) 0%, transparent 55%),
+    radial-gradient(130% 95% at 50% 100%, #2a2135 0%, #191322 55%, #0c0812 100%);
+  color: #f4ece0;
+  font-family: ui-rounded, "Nunito", "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

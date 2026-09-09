@@ -1,0 +1,681 @@
+/* =====================================================================
+   Two skins, one game. Layout is shared; every colour and every piece of
+   chrome comes from a token that the skin swaps.
+
+   1973 is a Teletype Model 33: black ink on fanfold paper, one weight, one
+   family, no colour at all. Anything that wants to be emphatic has to do it
+   with capitals or spacing, which is exactly the constraint the original was
+   written under.
+
+   The remaster is underground: warm lamplight in a cold cave, flat cel fills
+   and one heavy outline on everything.
+   ===================================================================== */
+
+:root {
+  /* --- 1973: paper ---------------------------------------------------- */
+  --ink: #241f1a;
+  --ink-dim: #6b6157;
+  --ink-bright: #0d0b09;
+  --accent: #241f1a;
+  --warn: #241f1a;
+  --outline: #b6a992;
+  --screen-bg: #e8e0cc;
+  --screen-radius: 2px;
+  --paper-edge: #d6cbb2;
+  --glow: none;
+  --btn-radius: 0;
+  --btn-shadow: none;
+  --btn-bg: #f3ecd9;
+  --btn-fg: #241f1a;
+  --field-bg: #f7f1e0;
+  --field-fg: #241f1a;
+  --map-radius: 0;
+  --body-font: ui-monospace, "DejaVu Sans Mono", "Cascadia Mono", "Courier New", monospace;
+  --line-height: 1.42;
+  --letter-spacing: 0.02em;
+
+  /* Cave map tokens, unused by the teletype but defined so nothing is
+     ever undefined when the skin flips mid-render. */
+  --rock: #2a2135;
+  --room-fill: #3d3350;
+  --room-line: #16111f;
+  --room-here: #ffd93d;
+  --room-safe: #7be495;
+  --room-suspect: #ff9f4a;
+  --tunnel: #4a3f5e;
+  --tunnel-lit: #ffd08a;
+
+  color-scheme: light;
+}
+
+html[data-skin='modern'] {
+  /* --- now: the cave -------------------------------------------------- */
+  --ink: #f4ece0;
+  --ink-dim: #a596b8;
+  --ink-bright: #ffffff;
+  --accent: #ffd93d;
+  --warn: #ff7a6b;
+  --outline: #16111f;
+  --screen-bg: linear-gradient(175deg, #3a2f4c 0%, #2a2135 50%, #1b1524 100%);
+  --screen-radius: 26px;
+  --paper-edge: transparent;
+  --glow: 0 0 18px rgba(255, 208, 138, 0.25);
+  --btn-radius: 999px;
+  --btn-shadow: 4px 4px 0 var(--outline);
+  --btn-bg: #f4ece0;
+  --btn-fg: #16111f;
+  --field-bg: #f4ece0;
+  --field-fg: #16111f;
+  --map-radius: 18px;
+  --body-font: ui-rounded, "Nunito", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --line-height: 1.5;
+  --letter-spacing: 0;
+
+  color-scheme: dark;
+}
+
+/* =====================================================================
+   Layout
+   ===================================================================== */
+
+.app {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cabinet {
+  width: min(980px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bezel {
+  position: relative;
+  padding: clamp(10px, 2vw, 20px);
+  border-radius: calc(var(--screen-radius) + 10px);
+  background: #cfc4ab;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+}
+
+html[data-skin='modern'] .bezel {
+  background: linear-gradient(160deg, #241c30 0%, #150f1e 100%);
+  border: 4px solid var(--outline);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.6);
+}
+
+/* The platen: the roller the paper comes over, with the feed knob at the end. */
+.platen {
+  height: 16px;
+  margin: -4px 0 10px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #4a4038 0%, #2b241e 60%, #1a1512 100%);
+  box-shadow: inset 0 -2px 3px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.platen::after {
+  content: '';
+  position: absolute;
+  right: -10px;
+  top: -5px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #6b5c4d, #241f1a 70%);
+}
+
+.screen {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--screen-radius);
+  background: var(--screen-bg);
+  aspect-ratio: 4 / 3;
+  box-shadow: var(--glow);
+}
+
+@media (max-width: 640px) {
+  /* A phone is taller than it is wide; a fixed 4:3 wastes most of it. */
+  .screen {
+    aspect-ratio: 3 / 4;
+  }
+}
+
+.screen-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(12px, 2.6vw, 26px);
+  color: var(--ink);
+  font-family: var(--body-font);
+  font-size: clamp(11px, 1.55vw, 15px);
+  line-height: var(--line-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+.screen-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Fit shrinks rather than clipping; see Frame.tsx. */
+.screen-body > * {
+  transform: scale(var(--fit, 1));
+  transform-origin: top center;
+  width: 100%;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  max-width: 72ch;
+  margin: 0 auto;
+}
+
+html[data-skin='modern'] .stack {
+  max-width: 60ch;
+}
+
+.line {
+  white-space: pre-wrap;
+  min-height: 1.2em;
+}
+
+.dim {
+  color: var(--ink-dim);
+}
+
+.accent {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.warn {
+  color: var(--warn);
+  font-weight: 700;
+}
+
+/* On paper there is no colour, so emphasis is weight and spacing only. */
+:root:not([data-skin='modern']) .accent,
+:root:not([data-skin='modern']) .warn {
+  letter-spacing: 0.14em;
+}
+
+/* --- paper chrome ---------------------------------------------------- */
+
+.sprockets {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 22px;
+  background-image: radial-gradient(circle at 50% 10px, #b6a992 3.5px, transparent 4px);
+  background-size: 22px 26px;
+  background-color: var(--paper-edge);
+  pointer-events: none;
+}
+
+.sprockets-left {
+  left: 0;
+  border-right: 1px dashed #c3b79e;
+}
+
+.sprockets-right {
+  right: 0;
+  border-left: 1px dashed #c3b79e;
+}
+
+/* Paper is not flat and not one colour; a faint fibre keeps it from reading
+   as a beige rectangle. */
+.paper-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.025) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.02) 0 1px, transparent 1px 4px);
+}
+
+:root:not([data-skin='modern']) .screen-inner {
+  padding-left: 34px;
+  padding-right: 34px;
+}
+
+/* --- cave chrome ------------------------------------------------------ */
+
+.lamp {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(60% 50% at 50% 42%, rgba(255, 208, 138, 0.16), transparent 70%);
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 120px 40px rgba(0, 0, 0, 0.55);
+}
+
+/* =====================================================================
+   The transcript
+   ===================================================================== */
+
+.paper {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.paper::-webkit-scrollbar {
+  display: none;
+}
+
+.printed {
+  white-space: pre-wrap;
+  min-height: 1.2em;
+}
+
+html[data-skin='modern'] .paper {
+  max-height: 9em;
+  color: var(--ink-dim);
+  font-size: 0.92em;
+  border-top: 2px solid rgba(244, 236, 224, 0.12);
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+/* The print head: a block where the next character is about to land. */
+.head {
+  display: inline-block;
+  width: 0.62em;
+  height: 1em;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+html[data-skin='modern'] .head {
+  display: none;
+}
+
+/* =====================================================================
+   The map
+   ===================================================================== */
+
+.map-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.cave-map {
+  width: min(100%, 46vh);
+  height: auto;
+  border-radius: var(--map-radius);
+}
+
+.tunnel {
+  stroke: var(--tunnel);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.tunnel-walked {
+  stroke: #6a5c82;
+}
+
+.tunnel-lit {
+  stroke: var(--tunnel-lit);
+  stroke-width: 7;
+}
+
+.aim {
+  stroke: var(--accent);
+  stroke-width: 3.5;
+  stroke-dasharray: 7 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.room-disc {
+  fill: var(--room-fill);
+  stroke: var(--room-line);
+  stroke-width: 3;
+}
+
+.room-label {
+  fill: var(--ink-dim);
+  font-size: 15px;
+  font-weight: 800;
+  text-anchor: middle;
+  font-family: var(--body-font);
+}
+
+.room-visited .room-disc {
+  fill: #4b5f4a;
+}
+
+.room-open .room-disc {
+  fill: #5b4b72;
+  stroke: var(--tunnel-lit);
+}
+
+.room-suspect .room-disc {
+  fill: #6b4630;
+  stroke: var(--room-suspect);
+}
+
+.room-here .room-disc {
+  fill: var(--room-here);
+  stroke: var(--outline);
+}
+
+.room-here .room-label {
+  fill: var(--outline);
+}
+
+.room-revealed .room-disc {
+  fill: #6b3040;
+}
+
+.room-visited .room-label,
+.room-open .room-label {
+  fill: var(--ink);
+}
+
+.mark path {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.mark-wumpus path {
+  fill: var(--warn);
+  stroke: var(--outline);
+  stroke-width: 1.2;
+}
+
+.mark-pit path {
+  stroke: #8fd0ff;
+}
+
+.mark-bats path {
+  stroke: #d7a6ff;
+}
+
+.truth path,
+.truth ellipse {
+  stroke: var(--outline);
+  stroke-width: 1.6;
+}
+
+.truth-wumpus path {
+  fill: #9be36f;
+}
+
+.truth-wumpus .eye {
+  fill: var(--outline);
+  stroke: none;
+}
+
+.truth-wumpus .teeth {
+  fill: none;
+  stroke: var(--outline);
+  stroke-width: 1.2;
+}
+
+.truth-pit ellipse {
+  fill: #120d1a;
+}
+
+.truth-pit .deeper {
+  fill: #000;
+}
+
+.truth-bats path {
+  fill: #c58cff;
+}
+
+.hunter-hat {
+  fill: #ff7a6b;
+  stroke: var(--outline);
+  stroke-width: 2;
+}
+
+.hunter-crown {
+  fill: #ffd93d;
+  stroke: none;
+}
+
+/* The map is the remaster's, and the paper skin never draws one. The reveal
+   on the report screen is the exception, and it is drawn in ink. */
+:root:not([data-skin='modern']) .map-reveal .cave-map {
+  filter: grayscale(1) contrast(1.35) brightness(1.15);
+  opacity: 0.9;
+}
+
+:root:not([data-skin='modern']) .map-reveal .room-disc {
+  fill: #e8e0cc;
+  stroke: #241f1a;
+}
+
+:root:not([data-skin='modern']) .map-reveal .tunnel {
+  stroke: #8c8272;
+}
+
+/* =====================================================================
+   The prompt
+   ===================================================================== */
+
+.prompt {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.prompt-q {
+  font-weight: 700;
+}
+
+.prompt-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.prompt-sep {
+  color: var(--ink-dim);
+}
+
+.prompt-note {
+  color: var(--ink-dim);
+  font-size: 0.85em;
+  max-width: 60ch;
+}
+
+.statusbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--outline);
+  color: var(--ink-dim);
+  font-size: 0.9em;
+}
+
+.statusbar .senses {
+  margin-left: auto;
+  color: var(--warn);
+  font-weight: 700;
+}
+
+.banner {
+  margin: 0;
+  font-family: var(--body-font);
+  font-weight: 900;
+  font-size: clamp(1.4rem, 5vw, 2.6rem);
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  color: var(--ink-bright);
+}
+
+html[data-skin='modern'] .banner {
+  color: var(--accent);
+  -webkit-text-stroke: 3px var(--outline);
+  paint-order: stroke fill;
+  text-shadow: 5px 5px 0 var(--outline);
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 3px 0;
+}
+
+.field label {
+  min-width: 10ch;
+  color: var(--ink-dim);
+}
+
+.field-input {
+  flex: 1;
+  max-width: 22ch;
+  padding: 5px 8px;
+  border: 2px solid var(--outline);
+  border-radius: var(--btn-radius);
+  background: var(--field-bg);
+  color: var(--field-fg);
+  font: inherit;
+  text-transform: uppercase;
+}
+
+/* =====================================================================
+   Buttons
+   ===================================================================== */
+
+.btn {
+  padding: 6px 14px;
+  border: 2px solid var(--outline);
+  border-radius: var(--btn-radius);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: var(--btn-shadow);
+  text-decoration: none;
+  display: inline-block;
+  transition:
+    transform 110ms ease,
+    box-shadow 110ms ease;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+html[data-skin='modern'] .btn:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--outline);
+}
+
+html[data-skin='modern'] .btn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--outline);
+}
+
+.btn-primary {
+  background: var(--accent);
+}
+
+:root:not([data-skin='modern']) .btn-primary {
+  background: #241f1a;
+  color: #f3ecd9;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-dim);
+  border-color: transparent;
+  box-shadow: none;
+  font-weight: 600;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  color: var(--ink);
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  color: var(--ink-dim);
+  font-family: var(--body-font);
+  font-size: 12px;
+}
+
+.seed {
+  margin-left: auto;
+  opacity: 0.7;
+}
+
+/* The stack is a column, so a button in it stretches to the full width unless
+   it is told not to. A button that wide reads as a banner rather than a
+   control -- and on the board screen it was wider than the board. */
+.stack > .btn {
+  align-self: flex-start;
+}
+
+/* The hunter is two rings around the room, so the number stays legible. */
+.hunter-ring {
+  fill: none;
+  stroke: var(--room-here);
+  stroke-width: 3;
+}
+
+.hunter-ring-outer {
+  stroke-width: 1.5;
+  opacity: 0.45;
+}
+
+/* =====================================================================
+   The footer
+
+   It sits outside the frame, on the page rather than on the paper -- so it
+   cannot use the ink tokens, which are chosen to be dark on a light sheet.
+   On the teletype skin that made the hovered control the same colour as the
+   room it is standing in, and the skin toggle disappeared entirely.
+   ===================================================================== */
+
+:root:not([data-skin='modern']) .controls {
+  color: #9a9186;
+}
+
+:root:not([data-skin='modern']) .controls .btn-ghost {
+  color: #9a9186;
+}
+
+:root:not([data-skin='modern']) .controls .btn-ghost:hover:not(:disabled) {
+  color: #f0e8d4;
+}

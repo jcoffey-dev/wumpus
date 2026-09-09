@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- The wumpus, at favicon size: all it can afford is a silhouette, two
+       eyes and the teeth. Drawn in code like everything else here. -->
+  <rect width="64" height="64" rx="12" fill="#2a2135"/>
+  <path d="M14 48 Q9 20 32 15 Q55 20 50 48 Z" fill="#9be36f" stroke="#16111f" stroke-width="3"/>
+  <circle cx="24" cy="30" r="4" fill="#16111f"/>
+  <circle cx="40" cy="30" r="4" fill="#16111f"/>
+  <path d="M20 40 L25 47 L30 40 L35 47 L40 40 L45 47" fill="none" stroke="#16111f" stroke-width="3" stroke-linejoin="round"/>
+</svg>
