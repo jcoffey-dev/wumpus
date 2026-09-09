@@ -35,6 +35,17 @@ import './App.css'
  */
 const SOURCE_URL = 'https://github.com/Coffey-Labs/wumpus'
 
+/**
+ * The way back out.
+ *
+ * Absolute rather than `/`, because this game is served from a subdirectory in
+ * production and from the root in development -- so the relative answer is
+ * right in one of those and points at the game itself in the other. The
+ * destination is a particular site, and naming it is the honest way to say so.
+ * The source link next to it works the same way for the same reason.
+ */
+const GAMES_URL = 'https://games.jcoffey.dev/'
+
 export default function App() {
   const [seed] = useState(randomSeed)
   const [state, dispatch] = useReducer(reducer, seed, initialState)
@@ -224,6 +235,14 @@ export default function App() {
       <Frame
         footer={
           <div className="controls">
+            {/* Leftmost, because that is where a way back belongs. */}
+            <a
+              className="btn btn-ghost back"
+              href={GAMES_URL}
+              title="The rest of the games"
+            >
+              GAMES
+            </a>
             <Btn
               kind="ghost"
               onClick={() => {
