@@ -635,6 +635,20 @@ html[data-skin='modern'] .btn:active:not(:disabled) {
   font-size: 12px;
 }
 
+/*
+ * The way back. The arrow is a pseudo-element rather than part of the label so
+ * that it can be the right arrow for the machine you are looking at: a chevron
+ * under the lamp, and the two ASCII characters a Teletype could actually
+ * strike on the paper skin.
+ */
+.controls .back::before {
+  content: '\2039\00a0';
+}
+
+:root:not([data-skin='modern']) .controls .back::before {
+  content: '<-\00a0';
+}
+
 .seed {
   margin-left: auto;
   opacity: 0.7;

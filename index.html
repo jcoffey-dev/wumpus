@@ -2,17 +2,142 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#2a2135" />
+    <title>Hunt the Wumpus — 1973 cave game, in your browser</title>
     <meta
       name="description"
-      content="Hunt the Wumpus - a browser recreation of Gregory Yob's 1973 original, on a Teletype or in a cel-shaded cave."
+      content="Twenty rooms, three tunnels each, and something asleep in one of them. Hunt it by smell with five crooked arrows — on the Teletype it was written for, or in a cel-shaded cave. Free, no account, nothing to install."
     />
-    <title>Hunt the Wumpus</title>
+    <meta name="author" content="John Coffey" />
+
+    <!--
+      Canonical, because the container serving this falls back to index.html
+      for any path under /wumpus/ rather than returning a 404. That is right
+      for the app and wrong for a crawler, which would otherwise be free to
+      index /wumpus/anything-at-all as a separate page with identical content.
+    -->
+    <link rel="canonical" href="https://games.jcoffey.dev/wumpus/" />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#2a2135" />
+
+    <meta property="og:site_name" content="Games · jcoffey.dev" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Hunt the Wumpus — 1973 cave game, in your browser" />
+    <meta property="og:url" content="https://games.jcoffey.dev/wumpus/" />
+    <meta
+      property="og:description"
+      content="Twenty rooms, three tunnels each, and something asleep in one of them. Hunt it by smell with five crooked arrows — on the Teletype it was written for, or in a cel-shaded cave."
+    />
+    <!--
+      The preview image is served by the site rather than carried in this
+      repository. Everything here is generated in code -- there is no artwork
+      file and there is not going to be one -- and a social card is not part of
+      the game. It sits with the deployment, which is also where the canonical
+      URL above points, so the two agree about which site this is.
+    -->
+    <meta property="og:image" content="https://games.jcoffey.dev/img/wumpus-social.png?v=2026-09-09a" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Hunt the Wumpus — a map of twenty cave rooms wired as a dodecahedron"
+    />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Hunt the Wumpus — 1973 cave game, in your browser" />
+    <meta
+      name="twitter:description"
+      content="Twenty rooms, three tunnels each, and something asleep in one of them. Hunt it by smell with five crooked arrows."
+    />
+    <meta name="twitter:image" content="https://games.jcoffey.dev/img/wumpus-social.png?v=2026-09-09a" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "VideoGame",
+        "name": "Hunt the Wumpus",
+        "url": "https://games.jcoffey.dev/wumpus/",
+        "description": "A browser recreation of Gregory Yob's 1973 cave game. Twenty rooms wired as a dodecahedron, three tunnels from each, two pits, two roosts of super bats and one sleeping wumpus. You are warned only when something is one tunnel away, and never told which room.",
+        "genre": ["Puzzle", "Strategy", "Retro"],
+        "gamePlatform": "Web browser",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Any modern web browser",
+        "playMode": ["SinglePlayer", "MultiPlayer"],
+        "numberOfPlayers": {
+          "@type": "QuantitativeValue",
+          "minValue": 1,
+          "maxValue": 4
+        },
+        "author": {
+          "@type": "Person",
+          "name": "John Coffey",
+          "url": "https://jcoffey.dev/"
+        },
+        "license": "https://www.gnu.org/licenses/agpl-3.0.html",
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock"
+        },
+        "inLanguage": "en"
+      }
+    </script>
+
+    <!--
+      The same three steps the way-back link in the footer offers, said in a
+      form a crawler reads: this game sits under the games site, which sits
+      under jcoffey.dev.
+    -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "John Coffey",
+            "item": "https://jcoffey.dev/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Games",
+            "item": "https://games.jcoffey.dev/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Hunt the Wumpus",
+            "item": "https://games.jcoffey.dev/wumpus/"
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <!--
+      What the page says before React has said anything. A crawler that does
+      not run scripts, and a reader who has them turned off, both get the game
+      described and a way onwards rather than an empty div.
+    -->
+    <noscript>
+      <h1>Hunt the Wumpus</h1>
+      <p>
+        A browser recreation of the 1973 cave game. Twenty rooms, three tunnels
+        from each, two bottomless pits, two roosts of super bats and one
+        sleeping wumpus. You are warned only when something is one tunnel away,
+        and never told which room. It needs JavaScript to play.
+      </p>
+      <p><a href="https://games.jcoffey.dev/">The rest of the games</a></p>
+      <p><a href="https://github.com/Coffey-Labs/wumpus">Source, AGPL-3.0-or-later</a></p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
