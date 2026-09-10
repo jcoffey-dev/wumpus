@@ -12,7 +12,7 @@ export default defineConfig({
   server: {
     // The game talks to /api in every environment; in production that is
     // nginx in front of the shared scores container. In development, run
-    // https://github.com/Coffey-Labs/games-scores alongside this -- or do not,
+    // https://github.com/jcoffey-dev/games-scores alongside this -- or do not,
     // and the board will say so rather than breaking.
     proxy: {
       '/api': {

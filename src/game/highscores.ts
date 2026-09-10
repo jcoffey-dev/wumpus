@@ -5,7 +5,7 @@
  * before putting it on screen.
  *
  * The service is shared with the other games on the site rather than being one
- * of ours -- see https://github.com/Coffey-Labs/games-scores. That is why
+ * of ours -- see https://github.com/jcoffey-dev/games-scores. That is why
  * every call names the game. Nothing else about it leaks in here: the rows
  * come back in this game's own field names, so this file would be identical if
  * the board were ours alone.

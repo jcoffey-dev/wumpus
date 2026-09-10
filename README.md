@@ -23,7 +23,7 @@ npm run dev
 ```
 
 The leaderboard is a separate service; run
-[games-scores](https://github.com/Coffey-Labs/games-scores) alongside this if
+[games-scores](https://github.com/jcoffey-dev/games-scores) alongside this if
 you want one, or do not, and the board will say so rather than break.
 
 You dial in rather than switch on, because in 1973 the game was not on your
@@ -69,7 +69,7 @@ There is no way to clear it. A hunter leaves the list only by being pushed off
 the bottom by a better one.
 
 The board is not in this repository and is not ours alone: every game on the
-site shares one service, [games-scores](https://github.com/Coffey-Labs/games-scores),
+site shares one service, [games-scores](https://github.com/jcoffey-dev/games-scores),
 which is one container and one volume however many games there are. All this
 repository holds is the client in `src/game/highscores.ts`, which names the
 game on every call and is otherwise exactly what it would be if the board were
